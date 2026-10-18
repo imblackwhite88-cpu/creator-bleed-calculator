@@ -282,24 +282,41 @@
 
       // Pinterest attribution: ?pin=01_receipt -> tk=calc_starter_01_receipt (kept for the session)
       (function applyPinTracking() {
-        var pin = null;
+        // Anonymous counters for the Pin Scribe Guild: which pin/video brought a visit, and affiliate button clicks.
+        var GUILD_EVENT_URL = 'https://guild-api.leanstacklab.workers.dev/e';
+        function guildPing(e, pinId, tk) {
+          try {
+            fetch(GUILD_EVENT_URL + '?e=' + e + '&pin=' + encodeURIComponent(pinId || '') + (tk ? '&tk=' + encodeURIComponent(tk) : ''), { mode: 'no-cors', keepalive: true });
+          } catch (err) {}
+        }
+
+        var pin = null, freshArrival = false;
         try { pin = new URLSearchParams(window.location.search).get('pin'); } catch (e) {}
         if (pin) {
           pin = pin.replace(/[^A-Za-z0-9_-]/g, '').slice(0, 40);
+          freshArrival = true;
           try { sessionStorage.setItem('bleed_pin', pin); } catch (e) {}
         } else {
           try { pin = sessionStorage.getItem('bleed_pin'); } catch (e) {}
         }
-        if (!pin) return;
+        if (pin && freshArrival) guildPing('visit', pin);
+
         Array.prototype.forEach.call(document.querySelectorAll('a[href*="systeme.io"]'), function (a) {
           try {
-            var u = new URL(a.href);
-            var tk = u.searchParams.get('tk');
-            if (tk && tk.slice(-(pin.length + 1)) !== '_' + pin) {
-              u.searchParams.set('tk', tk + '_' + pin);
-              a.href = u.toString();
+            if (pin) {
+              var u = new URL(a.href);
+              var tk = u.searchParams.get('tk');
+              if (tk && tk.slice(-(pin.length + 1)) !== '_' + pin) {
+                u.searchParams.set('tk', tk + '_' + pin);
+                a.href = u.toString();
+              }
             }
           } catch (e) {}
+          a.addEventListener('click', function () {
+            var t = '';
+            try { t = new URL(a.href).searchParams.get('tk') || ''; } catch (e) {}
+            guildPing('affiliate_click', pin, t);
+          });
         });
       })();
 
