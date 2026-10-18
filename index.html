@@ -205,6 +205,23 @@
         </article>
       </div>
 
+      <!-- Optional email capture (shown only once signups are switched on in the Guild API) -->
+      <div id="saveBox" class="mx-auto mt-8 hidden max-w-2xl rounded-2xl border border-slate-800 bg-slate-900/80 p-5 sm:p-6">
+        <p class="text-xs font-bold uppercase tracking-wider text-emerald-400">Not switching today?</p>
+        <h3 class="mt-1 text-lg font-black text-white sm:text-xl">Email me the 5-step software switching checklist</h3>
+        <p class="mt-1 text-sm text-slate-400">A short free guide to cutting your stack down, for whenever you're ready. Unsubscribe anytime.</p>
+        <form id="saveForm" class="mt-4 flex flex-col gap-3 sm:flex-row" novalidate>
+          <label for="saveEmail" class="sr-only">Email address</label>
+          <input id="saveEmail" type="email" required autocomplete="email" placeholder="you@example.com" class="min-h-[48px] flex-1 rounded-xl bg-slate-950 px-4 text-white ring-1 ring-slate-700 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          <button id="saveBtn" type="submit" class="min-h-[48px] rounded-xl bg-emerald-500 px-5 font-extrabold text-slate-950 transition hover:bg-emerald-400 disabled:opacity-60">Send it to me</button>
+        </form>
+        <label class="mt-3 flex items-start gap-2 text-xs text-slate-400">
+          <input id="saveConsent" type="checkbox" class="mt-0.5 h-4 w-4 accent-emerald-500">
+          <span>Yes, email me the checklist and a few follow-up emails about cutting software costs (some include partner links). Unsubscribe anytime.</span>
+        </label>
+        <p id="saveMsg" class="mt-3 text-sm text-slate-400" aria-live="polite"></p>
+      </div>
+
       <p class="mx-auto mt-8 max-w-3xl text-center text-[11px] leading-relaxed text-slate-500">
         Figures are estimates based on the amounts you enter; pricing and features of third-party tools change, so confirm current plans on each provider's site.
         The 3-year figure assumes a hypothetical 7% annual return for illustration only and is not financial advice.
@@ -281,6 +298,8 @@
       })();
 
       // Pinterest attribution: ?pin=01_receipt -> tk=calc_starter_01_receipt (kept for the session)
+      var guildPin = null; // pin/video that brought this visitor (shared with the telemetry below)
+
       (function applyPinTracking() {
         // Anonymous counters for the Pin Scribe Guild: which pin/video brought a visit, and affiliate button clicks.
         var GUILD_EVENT_URL = 'https://guild-api.leanstacklab.workers.dev/e';
@@ -299,6 +318,7 @@
         } else {
           try { pin = sessionStorage.getItem('bleed_pin'); } catch (e) {}
         }
+        guildPin = pin;
         if (pin && freshArrival) guildPing('visit', pin);
 
         Array.prototype.forEach.call(document.querySelectorAll('a[href*="systeme.io"]'), function (a) {
@@ -541,6 +561,58 @@
       }
 
       update();
+
+      // Anonymous telemetry + optional email signup for the Pin Scribe Guild.
+      // Sends: tools switched on, monthly total, time on page, whether they interacted, which button. No personal data.
+      (function guildTelemetry() {
+        var API = 'https://guild-api.leanstacklab.workers.dev';
+        var t0 = Date.now(), interacted = false, clicked = '', signedUp = false, sent = false;
+        var sid = Math.random().toString(36).slice(2, 10);
+        function mark() { interacted = true; }
+        $('toolList').addEventListener('click', mark);
+        $('toolList').addEventListener('input', mark);
+        Array.prototype.forEach.call(document.querySelectorAll('.plan-btn'), function (b) { b.addEventListener('click', mark); });
+
+        function payload() {
+          var on = TOOLS.filter(function (t) { return state.tools[t.id].on && state.tools[t.id].cost > 0; });
+          return JSON.stringify({
+            sid: sid, pin: guildPin || '',
+            tools: on.map(function (t) { return t.id; }),
+            monthly: on.reduce(function (sum, t) { return sum + state.tools[t.id].cost; }, 0),
+            dwell_ms: Date.now() - t0, interacted: interacted, clicked: clicked, signup: signedUp
+          });
+        }
+        function send() {
+          if (sent) return;
+          sent = true;
+          try { navigator.sendBeacon(API + '/t', new Blob([payload()], { type: 'text/plain' })); } catch (e) {}
+        }
+        $('ctaSysteme').addEventListener('click', function () { clicked = 'systeme_starter'; send(); });
+        $('ctaGR').addEventListener('click', function () { clicked = GR_LIVE ? 'getresponse' : 'systeme_unlimited'; send(); });
+        document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') send(); });
+        window.addEventListener('pagehide', send);
+
+        // Email box: only shown when the server says signups are switched on.
+        fetch(API + '/subscribe/status').then(function (r) { return r.json(); })
+          .then(function (d) { if (d && d.enabled) $('saveBox').classList.remove('hidden'); })
+          .catch(function () {});
+        var msg = $('saveMsg');
+        function say(text, tone) { msg.textContent = text; msg.className = 'mt-3 text-sm ' + (tone === 'ok' ? 'text-emerald-300' : tone === 'bad' ? 'text-rose-300' : 'text-slate-400'); }
+        $('saveForm').addEventListener('submit', function (e) {
+          e.preventDefault();
+          if (!$('saveConsent').checked) { say('Tick the box so we can email you the checklist.', 'bad'); return; }
+          $('saveBtn').disabled = true;
+          say('Sending…');
+          fetch(API + '/subscribe', { method: 'POST', headers: { 'content-type': 'text/plain' },
+            body: JSON.stringify({ email: $('saveEmail').value.trim(), consent: true, pin: guildPin || '' }) })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+              if (d && d.ok) { signedUp = true; $('saveForm').classList.add('hidden'); say('Done! Check your inbox for the checklist.', 'ok'); }
+              else { say((d && d.error) || 'Something went wrong. Please try again.', 'bad'); $('saveBtn').disabled = false; }
+            })
+            .catch(function () { say("Couldn't reach the server. Please try again in a moment.", 'bad'); $('saveBtn').disabled = false; });
+        });
+      })();
     })();
   </script>
 </body>
