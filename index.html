@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Software Bleed Calculator</title>
+  <meta name="description" content="Toggle the tools you pay for and see how much your overlapping creator software subscriptions cost you every year — and how much you'd keep by consolidating." />
+  <meta property="og:title" content="How much is your software stack bleeding you?" />
+  <meta property="og:description" content="Free 10-second calculator for creators & small online businesses." />
+  <meta name="theme-color" content="#020617" />
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    body { background: #020617; -webkit-tap-highlight-color: transparent; }
+    .tabular { font-variant-numeric: tabular-nums; }
+
+    /* Range slider: big thumb for thumbs */
+    input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 36px; background: transparent; cursor: pointer; touch-action: pan-y; }
+    input[type=range]:focus { outline: none; }
+    input[type=range]::-webkit-slider-runnable-track { height: 8px; border-radius: 999px; background: linear-gradient(90deg, var(--fill, #10b981) var(--pct, 50%), #1e293b var(--pct, 50%)); }
+    input[type=range]::-moz-range-track { height: 8px; border-radius: 999px; background: #1e293b; }
+    input[type=range]::-moz-range-progress { height: 8px; border-radius: 999px; background: var(--fill, #10b981); }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 28px; width: 28px; margin-top: -10px; border-radius: 50%; background: #f8fafc; border: 4px solid var(--fill, #10b981); box-shadow: 0 2px 10px rgba(0,0,0,.5); transition: transform .12s; }
+    input[type=range]::-moz-range-thumb { height: 22px; width: 22px; border-radius: 50%; background: #f8fafc; border: 4px solid var(--fill, #10b981); box-shadow: 0 2px 10px rgba(0,0,0,.5); }
+    input[type=range]:active::-webkit-slider-thumb { transform: scale(1.15); }
+    input[type=range]:focus-visible::-webkit-slider-thumb { outline: 3px solid #34d399; outline-offset: 2px; }
+    input[type=range]:disabled { opacity: .35; cursor: not-allowed; }
+
+    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+
+    .glow-red { box-shadow: 0 0 0 1px rgba(244,63,94,.35), 0 20px 60px -20px rgba(244,63,94,.45); }
+    .glow-green { box-shadow: 0 0 0 1px rgba(16,185,129,.4), 0 20px 60px -20px rgba(16,185,129,.5); }
+    .grid-bg { background-image: radial-gradient(circle at 1px 1px, rgba(148,163,184,.08) 1px, transparent 0); background-size: 22px 22px; }
+    @keyframes pulseRing { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,.55); } 100% { box-shadow: 0 0 0 14px rgba(16,185,129,0); } }
+    .cta-pulse { animation: pulseRing 2s infinite; }
+    @keyframes bump { 0% { transform: scale(1); } 40% { transform: scale(1.06); } 100% { transform: scale(1); } }
+    .bump { animation: bump .35s ease-out; }
+    @media (prefers-reduced-motion: reduce) { .cta-pulse, .bump { animation: none; } html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body class="min-h-screen font-sans text-slate-200 antialiased grid-bg">
+
+  <!-- Top glow -->
+  <div class="pointer-events-none fixed inset-x-0 top-0 h-80 bg-gradient-to-b from-rose-500/10 via-emerald-500/5 to-transparent"></div>
+
+  <main class="relative mx-auto max-w-6xl px-4 pb-36 pt-6 sm:px-6 sm:pt-10 lg:pb-16">
+
+    <!-- Header -->
+    <header class="text-center">
+      <div class="inline-flex items-center gap-2 rounded-full border border-rose-500/30 bg-rose-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-rose-300">
+        <span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-75"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-rose-500"></span></span>
+        Free 10-second audit
+      </div>
+      <h1 class="mx-auto mt-4 max-w-3xl text-3xl font-black leading-tight tracking-tight text-white sm:text-5xl">
+        How much is your software stack <span class="bg-gradient-to-r from-rose-400 to-red-500 bg-clip-text text-transparent">bleeding</span> you?
+      </h1>
+      <p class="mx-auto mt-3 max-w-xl text-sm text-slate-400 sm:text-base">
+        Tap the tools you pay for. Drag to match your bill. See what overlapping subscriptions cost you — and what you'd keep by consolidating.
+      </p>
+    </header>
+
+    <div class="mt-8 grid gap-6 lg:grid-cols-5 lg:items-start">
+
+      <!-- Tool checklist -->
+      <section class="lg:col-span-3" aria-labelledby="stack-heading">
+        <div class="mb-3 flex items-end justify-between">
+          <div>
+            <h2 id="stack-heading" class="text-lg font-bold text-white">1. Your current stack</h2>
+            <p class="text-xs text-slate-500">Tap a row to toggle · drag to adjust monthly cost</p>
+          </div>
+          <button id="resetBtn" type="button" class="rounded-lg px-3 py-2 text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-white">Reset</button>
+        </div>
+        <div id="toolList" class="space-y-3"></div>
+
+        <!-- Consolidated plan selector -->
+        <div class="mt-5 rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p class="text-sm font-semibold text-white">Compare against an all-in-one stack at</p>
+              <p class="text-xs text-slate-500">Systeme.io free plan or its entry paid plan</p>
+            </div>
+            <div class="inline-flex rounded-xl bg-slate-950 p-1 ring-1 ring-slate-800" role="radiogroup" aria-label="All-in-one monthly price">
+              <button type="button" data-plan="0" class="plan-btn min-h-[44px] rounded-lg px-4 text-sm font-bold transition" role="radio">$0/mo</button>
+              <button type="button" data-plan="17" class="plan-btn min-h-[44px] rounded-lg px-4 text-sm font-bold transition" role="radio">$17/mo</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dashboard -->
+      <section id="results" class="lg:col-span-2 lg:sticky lg:top-6" aria-labelledby="results-heading" aria-live="polite">
+        <h2 id="results-heading" class="mb-3 text-lg font-bold text-white">2. Your bleed report</h2>
+
+        <div class="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/80 backdrop-blur">
+          <div class="grid grid-cols-2 divide-x divide-slate-800 border-b border-slate-800">
+            <div class="p-4">
+              <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Monthly spend</p>
+              <p class="tabular mt-1 text-2xl font-extrabold text-white sm:text-3xl"><span id="monthly">$0</span><span class="text-sm font-medium text-slate-500">/mo</span></p>
+            </div>
+            <div class="p-4">
+              <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Annual spend</p>
+              <p class="tabular mt-1 text-2xl font-extrabold text-white sm:text-3xl"><span id="annual">$0</span><span class="text-sm font-medium text-slate-500">/yr</span></p>
+            </div>
+          </div>
+
+          <div class="p-4">
+            <div id="bleedCard" class="glow-red rounded-xl bg-gradient-to-br from-rose-950/80 to-slate-950 p-4">
+              <div class="flex items-center justify-between">
+                <p class="text-xs font-bold uppercase tracking-wider text-rose-300">12-month subscription bleed</p>
+                <span class="rounded-full bg-rose-500/20 px-2 py-0.5 text-[10px] font-bold uppercase text-rose-300">Wasted</span>
+              </div>
+              <p id="bleed" class="tabular mt-1 text-4xl font-black tracking-tight text-rose-400 sm:text-5xl">$0</p>
+              <p class="mt-1 text-xs text-slate-400">vs. <span id="planLabel" class="font-semibold text-slate-300">$0/mo</span> all-in-one · <span id="bleedPct" class="font-semibold text-rose-300">0%</span> of your software budget</p>
+              <div class="mt-3 h-2 overflow-hidden rounded-full bg-slate-800">
+                <div id="bleedBar" class="h-full rounded-full bg-gradient-to-r from-rose-500 to-red-500 transition-all duration-500" style="width:0%"></div>
+              </div>
+            </div>
+
+            <div class="glow-green mt-3 rounded-xl bg-gradient-to-br from-emerald-950/80 to-slate-950 p-4">
+              <div class="flex items-center justify-between">
+                <p class="text-xs font-bold uppercase tracking-wider text-emerald-300">3-year compounded waste</p>
+                <span class="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-300">You keep</span>
+              </div>
+              <p id="compound" class="tabular mt-1 text-4xl font-black tracking-tight text-emerald-400 sm:text-5xl">$0</p>
+              <p class="mt-1 text-xs text-slate-400">If that money stayed in your pocket and grew at <span class="font-semibold text-slate-300">7%/yr</span>, compounded monthly.</p>
+            </div>
+
+            <p id="verdict" class="mt-4 rounded-xl border border-slate-800 bg-slate-950/60 p-3 text-sm text-slate-300"></p>
+
+            <a href="#recs" class="mt-4 flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 text-base font-extrabold text-slate-950 transition hover:bg-emerald-400 active:scale-[.98]">
+              Stop the bleed — see my best fit
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Recommendations -->
+    <section id="recs" class="scroll-mt-6 pt-12" aria-labelledby="recs-heading">
+      <div class="text-center">
+        <h2 id="recs-heading" class="text-2xl font-black tracking-tight text-white sm:text-3xl">3. Your consolidation plan</h2>
+        <p id="recsSub" class="mx-auto mt-2 max-w-2xl text-sm text-slate-400"></p>
+      </div>
+
+      <div class="mt-6 grid gap-5 md:grid-cols-2">
+
+        <!-- Systeme.io -->
+        <article id="cardSysteme" class="relative flex flex-col rounded-2xl border bg-slate-900/80 p-5 transition sm:p-6">
+          <span id="badgeSysteme" class="absolute -top-3 left-5 hidden rounded-full bg-emerald-500 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-slate-950 shadow-lg">★ Best match for you</span>
+          <p class="text-xs font-bold uppercase tracking-wider text-emerald-400">Best for solopreneurs & digital creators</p>
+          <h3 class="mt-2 text-xl font-black text-white sm:text-2xl">Consolidate everything into Systeme.io</h3>
+          <p class="mt-2 text-sm text-slate-400">Email, funnels, courses, checkout and automations under one login — with a free-forever plan to start.</p>
+
+          <div class="mt-4 flex items-end gap-2">
+            <span class="text-4xl font-black text-white">$0</span>
+            <span class="pb-1.5 text-sm text-slate-400">/mo to start · paid plans from $17/mo</span>
+          </div>
+
+          <ul class="mt-4 space-y-2 text-sm" id="replaceList"></ul>
+
+          <div class="mt-5 rounded-xl bg-emerald-500/10 p-3 text-sm text-emerald-200 ring-1 ring-emerald-500/30">
+            Switching could save you <strong id="sysSave" class="tabular text-emerald-300">$0</strong> this year.
+          </div>
+
+          <div class="mt-auto pt-5">
+            <a id="ctaSysteme" href="https://systeme.io/?sa=sa0284162648d1c11a3c8276d249c8bc655dacb343&amp;tk=calc_starter" target="_blank" rel="sponsored noopener noreferrer" class="flex min-h-[56px] w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 text-base font-extrabold text-slate-950 transition hover:bg-emerald-400 active:scale-[.98]">
+              Start Systeme.io free
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </a>
+            <p class="mt-2 text-center text-xs text-slate-500">No credit card needed for the free plan</p>
+          </div>
+        </article>
+
+        <!-- GetResponse -->
+        <article id="cardGR" class="relative flex flex-col rounded-2xl border bg-slate-900/80 p-5 transition sm:p-6">
+          <span id="badgeGR" class="absolute -top-3 left-5 hidden rounded-full bg-sky-400 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-slate-950 shadow-lg">★ Best match for you</span>
+          <p id="grEyebrow" class="text-xs font-bold uppercase tracking-wider text-sky-400"></p>
+          <h3 id="grTitle" class="mt-2 text-xl font-black text-white sm:text-2xl"></h3>
+          <p id="grDesc" class="mt-2 text-sm text-slate-400"></p>
+
+          <ul id="grList" class="mt-4 space-y-2 text-sm text-slate-300"></ul>
+
+          <div id="grNote" class="mt-5 rounded-xl bg-sky-500/10 p-3 text-sm text-sky-200 ring-1 ring-sky-500/30"></div>
+
+          <div class="mt-auto pt-5">
+            <a id="ctaGR" href="#" target="_blank" rel="sponsored noopener noreferrer" class="flex min-h-[56px] w-full items-center justify-center gap-2 rounded-xl border-2 border-sky-400 px-5 text-base font-extrabold text-sky-300 transition hover:bg-sky-400 hover:text-slate-950 active:scale-[.98]">
+              <span id="ctaGRText"></span>
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </a>
+            <p id="grFine" class="mt-2 text-center text-xs text-slate-500"></p>
+          </div>
+        </article>
+      </div>
+
+      <p class="mx-auto mt-8 max-w-3xl text-center text-[11px] leading-relaxed text-slate-500">
+        Figures are estimates based on the amounts you enter; pricing and features of third-party tools change, so confirm current plans on each provider's site.
+        The 3-year figure assumes a hypothetical 7% annual return for illustration only and is not financial advice.
+        <strong class="text-slate-400">Disclosure: Some links on this page are partner links, meaning we may earn a commission at no extra cost to you.</strong>
+      </p>
+    </section>
+  </main>
+
+  <!-- Mobile sticky bar -->
+  <div id="stickyBar" class="fixed inset-x-0 bottom-0 z-40 border-t border-slate-800 bg-slate-950/95 px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 backdrop-blur transition-transform duration-300 lg:hidden">
+    <div class="mx-auto flex max-w-xl items-center gap-3">
+      <div class="min-w-0 flex-1">
+        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Yearly bleed</p>
+        <p id="stickyBleed" class="tabular text-2xl font-black leading-none text-rose-400">$0</p>
+      </div>
+      <a href="#recs" class="cta-pulse flex min-h-[48px] items-center rounded-xl bg-emerald-500 px-5 text-sm font-extrabold text-slate-950 active:scale-[.97]">Fix it →</a>
+    </div>
+  </div>
+
+  <script>
+    const GETRESPONSE_APPROVED_URL = "";
+
+    (function () {
+      'use strict';
+
+      var SYSTEME_UNLIMITED_URL = 'https://systeme.io/pricing?sa=sa0284162648d1c11a3c8276d249c8bc655dacb343&tk=calc_unlimited';
+      var GR_LIVE = GETRESPONSE_APPROVED_URL.trim() !== '';
+
+      // High-spend card: GetResponse once approved, Systeme.io Unlimited until then
+      var CARD2 = GR_LIVE ? {
+        url: GETRESPONSE_APPROVED_URL.trim(),
+        eyebrow: 'Best for scaling e-commerce & high-volume email',
+        title: 'Upgrade to GetResponse all-in-one automation',
+        desc: 'Built for lists that are growing fast and stores that need revenue-driving automation.',
+        bullets: [
+          'Visual marketing-automation workflows with scoring & tagging',
+          'E-commerce triggers: abandoned cart, product recommendations, purchase follow-ups',
+          'Built-in webinars, landing pages & conversion funnels',
+          'Store integrations plus high-deliverability sending for large lists'
+        ],
+        cta: 'Try GetResponse free',
+        fine: 'Free trial available — check current terms',
+        noteScaling: 'Your stack points to scale: you need automation and e-commerce depth that pays for itself in recovered revenue, not just a lower bill.',
+        noteDefault: 'Choose this if you run a store, send to a large list, or plan to scale soon — its automation is built to recover revenue as you grow.',
+        subScaling: 'deeper e-commerce automation will likely pay for itself'
+      } : {
+        url: SYSTEME_UNLIMITED_URL,
+        eyebrow: 'Best for high-spend & scaling businesses',
+        title: 'Scale & Migrate Free: Systeme.io Unlimited Tier',
+        desc: 'Replace an enterprise-grade stack with one platform — and let their team move your business over for you.',
+        bullets: [
+          'Replaces enterprise stacks: email, funnels, courses, stores & automations in one',
+          'Free concierge migration of your existing business',
+          'Unlimited contacts, emails, funnels & courses as you grow',
+          'Evergreen webinars, affiliate program & advanced automation rules built in'
+        ],
+        cta: 'See the Unlimited plan',
+        fine: 'Check current pricing and migration terms on Systeme.io',
+        noteScaling: 'You\'ve outgrown a starter stack. Unlimited keeps everything under one bill with no caps — and the migration is handled for you.',
+        noteDefault: 'Choose this when your list, product line or team outgrows the starter plan — no caps, and free migration from your current tools.',
+        subScaling: 'an unlimited all-in-one plan with free migration is the clean way to consolidate'
+      };
+
+      (function applyCard2() {
+        document.getElementById('grEyebrow').textContent = CARD2.eyebrow;
+        document.getElementById('grTitle').textContent = CARD2.title;
+        document.getElementById('grDesc').textContent = CARD2.desc;
+        document.getElementById('grList').innerHTML = CARD2.bullets.map(function (b) {
+          return '<li class="flex gap-2"><span class="text-sky-400">✔</span><span>' + b + '</span></li>';
+        }).join('');
+        document.getElementById('ctaGR').href = CARD2.url;
+        document.getElementById('ctaGRText').textContent = CARD2.cta;
+        document.getElementById('grFine').textContent = CARD2.fine;
+      })();
+
+      // Pinterest attribution: ?pin=01_receipt -> tk=calc_starter_01_receipt (kept for the session)
+      (function applyPinTracking() {
+        var pin = null;
+        try { pin = new URLSearchParams(window.location.search).get('pin'); } catch (e) {}
+        if (pin) {
+          pin = pin.replace(/[^A-Za-z0-9_-]/g, '').slice(0, 40);
+          try { sessionStorage.setItem('bleed_pin', pin); } catch (e) {}
+        } else {
+          try { pin = sessionStorage.getItem('bleed_pin'); } catch (e) {}
+        }
+        if (!pin) return;
+        Array.prototype.forEach.call(document.querySelectorAll('a[href*="systeme.io"]'), function (a) {
+          try {
+            var u = new URL(a.href);
+            var tk = u.searchParams.get('tk');
+            if (tk && tk.slice(-(pin.length + 1)) !== '_' + pin) {
+              u.searchParams.set('tk', tk + '_' + pin);
+              a.href = u.toString();
+            }
+          } catch (e) {}
+        });
+      })();
+
+      var TOOLS = [
+        { id: 'email',   name: 'Email Marketing',              eg: 'Mailchimp · Kit · ActiveCampaign', def: 49, max: 400, icon: '✉️' },
+        { id: 'funnel',  name: 'Funnel & Landing Pages',       eg: 'ClickFunnels · Leadpages',         def: 97, max: 400, icon: '🧲' },
+        { id: 'course',  name: 'Course / Digital Products',    eg: 'Teachable · Kajabi',               def: 99, max: 400, icon: '🎓' },
+        { id: 'store',   name: 'Link-in-Bio / Checkout Store', eg: 'Stan Store · Shopify Starter',     def: 29, max: 200, icon: '🛒' },
+        { id: 'auto',    name: 'Automation / Webinars',        eg: 'Zapier · WebinarJam · Zoom',       def: 45, max: 300, icon: '⚡' }
+      ];
+      var ANNUAL_RATE = 0.07;
+      var YEARS = 3;
+
+      var state = { plan: 0, tools: {} };
+      function resetState() {
+        state.plan = 0;
+        TOOLS.forEach(function (t) { state.tools[t.id] = { on: true, cost: t.def }; });
+      }
+      resetState();
+
+      var $ = function (id) { return document.getElementById(id); };
+      var fmt = function (n) { return '$' + Math.round(n).toLocaleString('en-US'); };
+
+      // ---------- Build tool rows ----------
+      var list = $('toolList');
+      TOOLS.forEach(function (t) {
+        var row = document.createElement('div');
+        row.className = 'tool-row rounded-2xl border bg-slate-900/70 transition';
+        row.dataset.id = t.id;
+        row.innerHTML =
+          '<button type="button" role="switch" class="toggle flex w-full items-center gap-3 p-4 text-left" aria-label="Toggle ' + t.name + '">' +
+            '<span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-800 text-xl" aria-hidden="true">' + t.icon + '</span>' +
+            '<span class="min-w-0 flex-1">' +
+              '<span class="block truncate text-[15px] font-bold text-white">' + t.name + '</span>' +
+              '<span class="block truncate text-xs text-slate-500">' + t.eg + '</span>' +
+            '</span>' +
+            '<span class="cost tabular text-right text-lg font-extrabold"></span>' +
+            '<span class="knob relative h-7 w-12 shrink-0 rounded-full transition-colors" aria-hidden="true"><span class="dot absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-all"></span></span>' +
+          '</button>' +
+          '<div class="slider-wrap flex items-center gap-3 px-4 pb-4">' +
+            '<input type="range" min="0" max="' + t.max + '" step="1" aria-label="' + t.name + ' monthly cost" class="flex-1" />' +
+            '<label class="flex items-center rounded-lg bg-slate-950 px-2 ring-1 ring-slate-800 focus-within:ring-emerald-500">' +
+              '<span class="text-sm text-slate-500">$</span>' +
+              '<input type="number" inputmode="numeric" min="0" max="9999" aria-label="' + t.name + ' monthly cost in dollars" class="tabular w-14 bg-transparent py-2 text-right text-sm font-bold text-white outline-none" />' +
+              '<span class="text-xs text-slate-500">/mo</span>' +
+            '</label>' +
+          '</div>';
+        list.appendChild(row);
+
+        var range = row.querySelector('input[type=range]');
+        var num = row.querySelector('input[type=number]');
+
+        row.querySelector('.toggle').addEventListener('click', function () {
+          var s = state.tools[t.id];
+          s.on = !s.on;
+          if (s.on && s.cost === 0) s.cost = t.def;
+          update();
+        });
+        range.addEventListener('input', function () {
+          state.tools[t.id].cost = +range.value;
+          state.tools[t.id].on = true;
+          update();
+        });
+        num.addEventListener('input', function () {
+          var v = Math.max(0, Math.min(9999, parseInt(num.value, 10) || 0));
+          state.tools[t.id].cost = v;
+          state.tools[t.id].on = true;
+          update({ skipNum: t.id });
+        });
+        num.addEventListener('blur', function () { update(); });
+      });
+
+      // ---------- Plan buttons ----------
+      Array.prototype.forEach.call(document.querySelectorAll('.plan-btn'), function (b) {
+        b.addEventListener('click', function () { state.plan = +b.dataset.plan; update(); });
+      });
+      $('resetBtn').addEventListener('click', function () { resetState(); update(); });
+
+      // ---------- Animated numbers ----------
+      var shown = {};
+      function animate(el, to) {
+        var key = el.id;
+        var from = shown[key] == null ? 0 : shown[key];
+        shown[key] = to;
+        if (from === to) { el.textContent = fmt(to); return; }
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = fmt(to); return; }
+        var start = performance.now(), dur = 450;
+        cancelAnimationFrame(el._raf);
+        (function step(now) {
+          var p = Math.min(1, (now - start) / dur);
+          var e = 1 - Math.pow(1 - p, 3);
+          el.textContent = fmt(from + (to - from) * e);
+          if (p < 1) el._raf = requestAnimationFrame(step);
+        })(start);
+      }
+
+      function futureValue(monthly, years, rate) {
+        var r = rate / 12, n = years * 12;
+        if (monthly <= 0) return 0;
+        return monthly * ((Math.pow(1 + r, n) - 1) / r);
+      }
+
+      // ---------- Main update ----------
+      function update(opts) {
+        opts = opts || {};
+        var monthly = 0, activeCount = 0, activeNames = [];
+
+        TOOLS.forEach(function (t) {
+          var s = state.tools[t.id];
+          var row = list.querySelector('[data-id="' + t.id + '"]');
+          var range = row.querySelector('input[type=range]');
+          var num = row.querySelector('input[type=number]');
+          var knob = row.querySelector('.knob');
+          var dot = row.querySelector('.dot');
+          var cost = row.querySelector('.cost');
+
+          if (+s.cost > +range.max) range.max = s.cost;
+          range.value = s.cost;
+          range.style.setProperty('--pct', (s.cost / range.max * 100) + '%');
+          range.style.setProperty('--fill', s.on ? '#f43f5e' : '#475569');
+          if (opts.skipNum !== t.id) num.value = s.cost;
+
+          row.querySelector('.toggle').setAttribute('aria-checked', s.on);
+          row.className = 'tool-row rounded-2xl border transition ' + (s.on ? 'border-rose-500/40 bg-slate-900' : 'border-slate-800 bg-slate-900/40');
+          knob.className = 'knob relative h-7 w-12 shrink-0 rounded-full transition-colors ' + (s.on ? 'bg-rose-500' : 'bg-slate-700');
+          dot.style.left = s.on ? '1.5rem' : '0.25rem';
+          cost.textContent = s.on ? fmt(s.cost) : '$0';
+          cost.className = 'cost tabular text-right text-lg font-extrabold ' + (s.on ? 'text-rose-300' : 'text-slate-600');
+          row.querySelector('.slider-wrap').style.opacity = s.on ? '1' : '.45';
+
+          if (s.on && s.cost > 0) { monthly += s.cost; activeCount++; activeNames.push(t); }
+        });
+
+        var annual = monthly * 12;
+        var monthlyBleed = Math.max(0, monthly - state.plan);
+        var bleed = monthlyBleed * 12;
+        var compound = futureValue(monthlyBleed, YEARS, ANNUAL_RATE);
+        var pct = monthly > 0 ? Math.round((monthlyBleed / monthly) * 100) : 0;
+
+        animate($('monthly'), monthly);
+        animate($('annual'), annual);
+        animate($('bleed'), bleed);
+        animate($('compound'), compound);
+        animate($('stickyBleed'), bleed);
+        animate($('sysSave'), bleed);
+        $('bleedPct').textContent = pct + '%';
+        $('bleedBar').style.width = pct + '%';
+        $('planLabel').textContent = '$' + state.plan + '/mo';
+
+        Array.prototype.forEach.call(document.querySelectorAll('.plan-btn'), function (b) {
+          var on = +b.dataset.plan === state.plan;
+          b.setAttribute('aria-checked', on);
+          b.className = 'plan-btn min-h-[44px] rounded-lg px-4 text-sm font-bold transition ' + (on ? 'bg-emerald-500 text-slate-950' : 'text-slate-400 hover:text-white');
+        });
+
+        // Verdict copy
+        var v = $('verdict');
+        if (activeCount === 0) {
+          v.innerHTML = '👆 Toggle on the tools you pay for to see your bleed.';
+        } else if (activeCount === 1) {
+          v.innerHTML = 'Only one tool? You could still save <strong class="text-emerald-300">' + fmt(bleed) + '/yr</strong> — and get the other four features included.';
+        } else {
+          v.innerHTML = 'You\'re paying <strong class="text-white">' + activeCount + ' separate companies</strong> for features one platform bundles. That\'s <strong class="text-rose-300">' + fmt(bleed / 52) + ' every week</strong> leaking out of your business.';
+        }
+
+        // Recommendation logic
+        var hasStore = state.tools.store.on && state.tools.store.cost > 0;
+        var heavyEmail = state.tools.email.on && state.tools.email.cost >= 150;
+        var heavyAuto = state.tools.auto.on && state.tools.auto.cost >= 100;
+        var scaling = monthly >= 350 || heavyEmail || (hasStore && heavyAuto);
+        renderRecs(scaling, monthly, bleed, activeNames);
+
+        // Bump animation on the hero metric
+        var bc = $('bleed');
+        bc.classList.remove('bump'); void bc.offsetWidth; bc.classList.add('bump');
+      }
+
+      var SYSTEME_REPLACES = {
+        email: 'Email marketing & broadcasts',
+        funnel: 'Funnels & landing pages',
+        course: 'Courses & membership sites',
+        store: 'Checkout pages & order bumps',
+        auto: 'Automations, rules & evergreen webinars'
+      };
+
+      function renderRecs(scaling, monthly, bleed, active) {
+        var cs = $('cardSysteme'), cg = $('cardGR');
+        cs.className = 'relative flex flex-col rounded-2xl border bg-slate-900/80 p-5 transition sm:p-6 ' + (!scaling ? 'border-emerald-500 glow-green md:order-1' : 'border-slate-800 md:order-2');
+        cg.className = 'relative flex flex-col rounded-2xl border bg-slate-900/80 p-5 transition sm:p-6 ' + (scaling ? 'border-sky-400 md:order-1' : 'border-slate-800 md:order-2');
+        cs.style.order = scaling ? 2 : 1;
+        cg.style.order = scaling ? 1 : 2;
+        cg.style.boxShadow = scaling ? '0 0 0 1px rgba(56,189,248,.4), 0 20px 60px -20px rgba(56,189,248,.45)' : '';
+        $('badgeSysteme').classList.toggle('hidden', scaling);
+        $('badgeGR').classList.toggle('hidden', !scaling);
+        $('ctaSysteme').classList.toggle('cta-pulse', !scaling);
+
+        var activeIds = active.map(function (t) { return t.id; });
+        $('replaceList').innerHTML = TOOLS.map(function (t) {
+          var on = activeIds.indexOf(t.id) !== -1;
+          var s = state.tools[t.id];
+          return '<li class="flex items-start gap-2 ' + (on ? 'text-slate-200' : 'text-slate-400') + '">' +
+            '<span class="text-emerald-400">✔</span><span class="flex-1">' + SYSTEME_REPLACES[t.id] + '</span>' +
+            (on ? '<span class="tabular shrink-0 text-xs font-semibold text-rose-300 line-through decoration-rose-400/70">' + fmt(s.cost) + '/mo</span>' : '') +
+          '</li>';
+        }).join('');
+
+        $('recsSub').innerHTML = active.length === 0
+          ? 'Toggle your tools above to get a tailored recommendation.'
+          : scaling
+            ? 'At <strong class="text-white">' + fmt(monthly) + '/mo</strong>, you look like a growing business — ' + CARD2.subScaling + '. Leaner and creator-first? Systeme.io is the money-saver.'
+            : 'At <strong class="text-white">' + fmt(monthly) + '/mo</strong>, you\'re overpaying for a creator stack. Systeme.io replaces all ' + TOOLS.length + ' tools and puts <strong class="text-emerald-300">' + fmt(bleed) + '/yr</strong> back in your pocket.';
+
+        $('grNote').textContent = scaling ? CARD2.noteScaling : CARD2.noteDefault;
+      }
+
+      // Hide sticky bar when recommendations are on screen
+      var bar = $('stickyBar');
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+          bar.style.transform = entries[0].isIntersecting ? 'translateY(110%)' : '';
+        }, { threshold: 0.15 }).observe($('recs'));
+      }
+
+      update();
+    })();
+  </script>
+</body>
+</html>
