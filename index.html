@@ -3,47 +3,74 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Software Bleed Calculator</title>
+  <title>Software Bleed Calculator · by Worth Lab HQ</title>
   <meta name="description" content="Toggle the tools you pay for and see how much your overlapping creator software subscriptions cost you every year — and how much you'd keep by consolidating." />
   <meta property="og:title" content="How much is your software stack bleeding you?" />
   <meta property="og:description" content="Free 10-second calculator for creators & small online businesses." />
-  <meta name="theme-color" content="#020617" />
+  <meta name="theme-color" content="#0b0d10" />
   <script src="https://cdn.tailwindcss.com/3.4.16"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'], display: ['Orbitron', 'Inter', 'sans-serif'] },
+          // Worth Lab HQ palette (agents/lib/brand.js). The old colour names are remapped so every class follows:
+          // slate -> carbon/gunmetal/steel, emerald -> neon green (savings, the main button),
+          // rose/red -> molten orange (costs), amber -> steel (neutral offer accent).
+          colors: {
+            slate: { 50: '#f6f7f8', 100: '#eef1f4', 200: '#e6e9ed', 300: '#c9cdd2', 400: '#a8adb4', 500: '#9aa1aa', 600: '#5d636b', 700: '#3a4049', 800: '#262b33', 900: '#1c2026', 950: '#0b0d10' },
+            emerald: { 50: '#e9fdf5', 100: '#c8fae6', 200: '#9df5d2', 300: '#6ef0be', 400: '#45eaae', 500: '#22e5a0', 600: '#15c085', 700: '#0f9367', 800: '#0b6a4b', 900: '#08473a', 950: '#042a20' },
+            rose: { 50: '#fff4ea', 100: '#ffe3c8', 200: '#ffc995', 300: '#ffb26b', 400: '#ff9d45', 500: '#ff8a1f', 600: '#e5710a', 700: '#b85808', 800: '#8a4207', 900: '#5c2c05', 950: '#331802' },
+            red: { 400: '#ff9d45', 500: '#ff8a1f', 600: '#e5710a' },
+            amber: { 200: '#e6e9ed', 300: '#d4d8dd', 400: '#c9cdd2', 500: '#a8adb4' },
+          },
         },
       },
     };
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet" />
   <style>
-    body { background: #020617; -webkit-tap-highlight-color: transparent; }
+    body { background-color: #0b0d10; -webkit-tap-highlight-color: transparent; }
     .tabular { font-variant-numeric: tabular-nums; }
 
     /* Range slider: big thumb for thumbs */
     input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 36px; background: transparent; cursor: pointer; touch-action: pan-y; }
     input[type=range]:focus { outline: none; }
-    input[type=range]::-webkit-slider-runnable-track { height: 8px; border-radius: 999px; background: linear-gradient(90deg, var(--fill, #10b981) var(--pct, 50%), #1e293b var(--pct, 50%)); }
-    input[type=range]::-moz-range-track { height: 8px; border-radius: 999px; background: #1e293b; }
-    input[type=range]::-moz-range-progress { height: 8px; border-radius: 999px; background: var(--fill, #10b981); }
-    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 28px; width: 28px; margin-top: -10px; border-radius: 50%; background: #f8fafc; border: 4px solid var(--fill, #10b981); box-shadow: 0 2px 10px rgba(0,0,0,.5); transition: transform .12s; }
-    input[type=range]::-moz-range-thumb { height: 22px; width: 22px; border-radius: 50%; background: #f8fafc; border: 4px solid var(--fill, #10b981); box-shadow: 0 2px 10px rgba(0,0,0,.5); }
+    input[type=range]::-webkit-slider-runnable-track { height: 8px; border-radius: 999px; background: linear-gradient(90deg, var(--fill, #22e5a0) var(--pct, 50%), #262b33 var(--pct, 50%)); }
+    input[type=range]::-moz-range-track { height: 8px; border-radius: 999px; background: #262b33; }
+    input[type=range]::-moz-range-progress { height: 8px; border-radius: 999px; background: var(--fill, #22e5a0); }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 28px; width: 28px; margin-top: -10px; border-radius: 50%; background: #e6e9ed; border: 4px solid var(--fill, #22e5a0); box-shadow: 0 2px 10px rgba(0,0,0,.5); transition: transform .12s; }
+    input[type=range]::-moz-range-thumb { height: 22px; width: 22px; border-radius: 50%; background: #e6e9ed; border: 4px solid var(--fill, #22e5a0); box-shadow: 0 2px 10px rgba(0,0,0,.5); }
     input[type=range]:active::-webkit-slider-thumb { transform: scale(1.15); }
-    input[type=range]:focus-visible::-webkit-slider-thumb { outline: 3px solid #34d399; outline-offset: 2px; }
+    input[type=range]:focus-visible::-webkit-slider-thumb { outline: 3px solid #22e5a0; outline-offset: 2px; }
     input[type=range]:disabled { opacity: .35; cursor: not-allowed; }
 
     input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     input[type=number] { -moz-appearance: textfield; }
 
-    .glow-red { box-shadow: 0 0 0 1px rgba(244,63,94,.35), 0 20px 60px -20px rgba(244,63,94,.45); }
-    .glow-green { box-shadow: 0 0 0 1px rgba(16,185,129,.4), 0 20px 60px -20px rgba(16,185,129,.5); }
-    .grid-bg { background-image: radial-gradient(circle at 1px 1px, rgba(148,163,184,.08) 1px, transparent 0); background-size: 22px 22px; }
-    @keyframes pulseRing { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,.55); } 100% { box-shadow: 0 0 0 14px rgba(16,185,129,0); } }
+    /* Worth Lab HQ look. Glow only on the main result (orange) and the main button (green). */
+    .glow-red { border: 1px solid #ff8a1f; box-shadow: 0 0 0 1px rgba(255,138,31,.35), 0 0 22px rgba(255,138,31,.45), inset 0 0 18px rgba(255,138,31,.12); }
+    .glow-green { box-shadow: 0 0 0 1px rgba(34,229,160,.45), 0 0 22px rgba(34,229,160,.4); }
+    .grid-bg { background-image:
+        repeating-linear-gradient(45deg, rgba(255,255,255,.025) 0 2px, transparent 2px 6px),
+        repeating-linear-gradient(-45deg, rgba(0,0,0,.35) 0 2px, transparent 2px 6px),
+        radial-gradient(ellipse at 50% 0%, #1a1f26, #0b0d10 70%); background-attachment: fixed; }
+    .steel-text { background: linear-gradient(180deg, #ffffff 0%, #e6e9ed 30%, #a8adb4 52%, #5d636b 60%, #e6e9ed 85%);
+      -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 2px 0 rgba(0,0,0,.6)); }
+    .hq { color: #ff8a1f; text-shadow: 0 0 8px rgba(255,138,31,.85), 0 0 20px rgba(255,138,31,.45); }
+    .plate { position: relative; background: linear-gradient(160deg, #2b3038, #15181d 55%, #20252c) !important; border-color: #3a4049 !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.1), inset 0 -2px 0 rgba(0,0,0,.5), 0 14px 40px rgba(0,0,0,.5); }
+    .plate::before, .plate::after { content: ""; position: absolute; top: 9px; left: 9px; width: 7px; height: 7px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #d9dde2, #5d636b); box-shadow: 0 1px 1px #000; pointer-events: none; }
+    .plate::after { left: auto; right: 9px; }
+    .cta-neon { background: linear-gradient(180deg, #5dfcc3, #22e5a0 55%, #12a874) !important; color: #04140d !important;
+      box-shadow: 0 0 20px rgba(34,229,160,.55), inset 0 1px 0 rgba(255,255,255,.6); }
+    .hexmark { width: 30px; height: 34px; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); background: linear-gradient(160deg, #e6e9ed, #5d636b); display: grid; place-items: center; }
+    .hexmark span { width: 23px; height: 27px; clip-path: inherit; background: #15181d; display: grid; place-items: center; font: 900 10px Orbitron, sans-serif; color: #22e5a0; text-shadow: 0 0 6px #22e5a0; }
+    /* The pulse ring is drawn on top of the button's own green glow, so the main CTA never loses it. */
+    @keyframes pulseRing { 0% { box-shadow: 0 0 20px rgba(34,229,160,.55), inset 0 1px 0 rgba(255,255,255,.6), 0 0 0 0 rgba(34,229,160,.55); } 100% { box-shadow: 0 0 20px rgba(34,229,160,.55), inset 0 1px 0 rgba(255,255,255,.6), 0 0 0 14px rgba(34,229,160,0); } }
     .cta-pulse { animation: pulseRing 2s infinite; }
     @keyframes bump { 0% { transform: scale(1); } 40% { transform: scale(1.06); } 100% { transform: scale(1); } }
     .bump { animation: bump .35s ease-out; }
@@ -59,12 +86,16 @@
 
     <!-- Header -->
     <header class="text-center">
+      <span class="mb-5 inline-flex items-center gap-2" aria-label="Worth Lab HQ">
+        <span class="hexmark" aria-hidden="true"><span>WL</span></span>
+        <span class="font-display text-lg font-black tracking-wider"><span class="steel-text">WORTH LAB</span> <span class="hq">HQ</span></span>
+      </span><br />
       <div class="inline-flex items-center gap-2 rounded-full border border-rose-500/30 bg-rose-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-rose-300">
         <span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-75"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-rose-500"></span></span>
         Free 10-second audit
       </div>
       <h1 class="mx-auto mt-4 max-w-3xl text-3xl font-black leading-tight tracking-tight text-white sm:text-5xl">
-        How much is your software stack <span class="bg-gradient-to-r from-rose-400 to-red-500 bg-clip-text text-transparent">bleeding</span> you?
+        <span class="steel-text">How much is your software stack</span> <span class="bg-gradient-to-r from-rose-400 to-red-500 bg-clip-text text-transparent">bleeding</span> <span class="steel-text">you?</span>
       </h1>
       <p class="mx-auto mt-3 max-w-xl text-sm text-slate-400 sm:text-base">
         Tap the tools you pay for. Drag to match your bill. See what overlapping subscriptions cost you — and what you'd keep by consolidating.
@@ -88,7 +119,7 @@
         <div id="toolList" class="space-y-3"></div>
 
         <!-- Consolidated plan selector -->
-        <div class="mt-5 rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
+        <div class="plate mt-5 rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p class="text-sm font-semibold text-white">Compare against an all-in-one stack at</p>
@@ -106,7 +137,7 @@
       <section id="results" class="lg:col-span-2 lg:sticky lg:top-6" aria-labelledby="results-heading" aria-live="polite">
         <h2 id="results-heading" class="mb-3 text-lg font-bold text-white">2. Your bleed report</h2>
 
-        <div class="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/80 backdrop-blur">
+        <div class="plate overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/80 backdrop-blur">
           <div class="grid grid-cols-2 divide-x divide-slate-800 border-b border-slate-800">
             <div class="p-4">
               <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Monthly spend</p>
@@ -114,7 +145,7 @@
             </div>
             <div class="p-4">
               <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Annual spend</p>
-              <p class="tabular mt-1 text-2xl font-extrabold text-white sm:text-3xl"><span id="annual">$0</span><span class="text-sm font-medium text-slate-500">/yr</span></p>
+              <p class="tabular mt-1 text-2xl font-extrabold text-white sm:text-3xl"><span id="annual" class="font-display">$0</span><span class="text-sm font-medium text-slate-500">/yr</span></p>
             </div>
           </div>
 
@@ -124,19 +155,19 @@
                 <p class="text-xs font-bold uppercase tracking-wider text-rose-300">12-month subscription bleed</p>
                 <span class="rounded-full bg-rose-500/20 px-2 py-0.5 text-[10px] font-bold uppercase text-rose-300">Wasted</span>
               </div>
-              <p id="bleed" class="tabular mt-1 text-4xl font-black tracking-tight text-rose-400 sm:text-5xl">$0</p>
+              <p id="bleed" class="tabular font-display mt-1 text-4xl font-black tracking-tight text-rose-400 sm:text-5xl">$0</p>
               <p class="mt-1 text-xs text-slate-400">vs. <span id="planLabel" class="font-semibold text-slate-300">$0/mo</span> all-in-one · <span id="bleedPct" class="font-semibold text-rose-300">0%</span> of your software budget</p>
               <div class="mt-3 h-2 overflow-hidden rounded-full bg-slate-800">
                 <div id="bleedBar" class="h-full rounded-full bg-gradient-to-r from-rose-500 to-red-500 transition-all duration-500" style="width:0%"></div>
               </div>
             </div>
 
-            <div class="glow-green mt-3 rounded-xl bg-gradient-to-br from-emerald-950/80 to-slate-950 p-4">
+            <div class="mt-3 rounded-xl border border-slate-700 bg-gradient-to-br from-emerald-950/60 to-slate-950 p-4">
               <div class="flex items-center justify-between">
                 <p class="text-xs font-bold uppercase tracking-wider text-emerald-300">3-year compounded waste</p>
                 <span class="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-300">You keep</span>
               </div>
-              <p id="compound" class="tabular mt-1 text-4xl font-black tracking-tight text-emerald-400 sm:text-5xl">$0</p>
+              <p id="compound" class="tabular font-display mt-1 text-4xl font-black tracking-tight text-emerald-400 sm:text-5xl">$0</p>
               <p class="mt-1 text-xs text-slate-400">If that money stayed in your pocket and grew at <span class="font-semibold text-slate-300">7%/yr</span>, compounded monthly.</p>
             </div>
 
@@ -180,7 +211,7 @@
 
           <div class="mt-auto pt-5">
             <p class="cta-disclosure mb-2 text-center text-xs text-slate-400">Partner link: we may earn a commission if you sign up, at no extra cost to you.</p>
-            <a id="ctaSysteme" href="https://systeme.io/?sa=sa0284162648d1c11a3c8276d249c8bc655dacb343&amp;tk=calc_starter" target="_blank" rel="sponsored noopener noreferrer" class="flex min-h-[56px] w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 text-base font-extrabold text-slate-950 transition hover:bg-emerald-400 active:scale-[.98]">
+            <a id="ctaSysteme" href="https://systeme.io/?sa=sa0284162648d1c11a3c8276d249c8bc655dacb343&amp;tk=calc_starter" target="_blank" rel="sponsored noopener noreferrer" class="cta-neon flex min-h-[56px] w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 text-base font-extrabold text-slate-950 transition hover:bg-emerald-400 active:scale-[.98]">
               Start Systeme.io free
               <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
             </a>
@@ -217,7 +248,7 @@
           <p class="mx-auto mt-2 max-w-2xl text-sm text-slate-400">You don't have to consolidate everything. If one tool is the real pain, these two are worth a look.</p>
         </div>
         <div class="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
-        <article id="cardBeehiiv" class="relative flex scroll-mt-6 flex-col rounded-2xl border border-slate-800 bg-slate-900/80 p-5 transition sm:p-6">
+        <article id="cardBeehiiv" class="plate relative flex scroll-mt-6 flex-col rounded-2xl border border-slate-800 bg-slate-900/80 p-5 transition sm:p-6">
           <span id="chipBeehiiv" class="absolute -top-3 left-5 hidden rounded-full bg-violet-400 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-slate-950 shadow-lg"></span>
           <p class="text-xs font-bold uppercase tracking-wider text-violet-400">Best if your main tool is a newsletter</p>
           <h4 class="mt-2 text-xl font-black text-white">beehiiv for newsletters</h4>
@@ -237,7 +268,7 @@
             <p class="mt-2 text-center text-xs text-slate-500">Free plan to start</p>
           </div>
         </article>
-        <article id="cardClickFunnels" class="relative flex scroll-mt-6 flex-col rounded-2xl border border-slate-800 bg-slate-900/80 p-5 transition sm:p-6">
+        <article id="cardClickFunnels" class="plate relative flex scroll-mt-6 flex-col rounded-2xl border border-slate-800 bg-slate-900/80 p-5 transition sm:p-6">
           <span id="chipClickFunnels" class="absolute -top-3 left-5 hidden rounded-full bg-amber-400 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-slate-950 shadow-lg"></span>
           <p class="text-xs font-bold uppercase tracking-wider text-amber-400">Best if you live inside a dedicated funnel builder</p>
           <h4 class="mt-2 text-xl font-black text-white">ClickFunnels for funnels</h4>
@@ -292,7 +323,7 @@
         <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Yearly bleed</p>
         <p id="stickyBleed" class="tabular text-2xl font-black leading-none text-rose-400">$0</p>
       </div>
-      <a id="stickyFixLink" href="#recs" class="cta-pulse flex min-h-[48px] items-center rounded-xl bg-emerald-500 px-5 text-sm font-extrabold text-slate-950 active:scale-[.97]">Fix it →</a>
+      <a id="stickyFixLink" href="#recs" class="cta-pulse cta-neon flex min-h-[48px] items-center rounded-xl bg-emerald-500 px-5 text-sm font-extrabold text-slate-950 active:scale-[.97]">Fix it →</a>
     </div>
   </div>
 
@@ -522,7 +553,7 @@
           if (+s.cost > +range.max) range.max = s.cost;
           range.value = s.cost;
           range.style.setProperty('--pct', (s.cost / range.max * 100) + '%');
-          range.style.setProperty('--fill', s.on ? '#f43f5e' : '#475569');
+          range.style.setProperty('--fill', s.on ? '#ff8a1f' : '#5d636b');
           if (opts.skipNum !== t.id) num.value = s.cost;
 
           row.querySelector('.toggle').setAttribute('aria-checked', s.on);
