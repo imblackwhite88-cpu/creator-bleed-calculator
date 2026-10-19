@@ -142,7 +142,7 @@
 
             <p id="verdict" class="mt-4 rounded-xl border border-slate-800 bg-slate-950/60 p-3 text-sm text-slate-300"></p>
 
-            <a href="#recs" class="mt-4 flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 text-base font-extrabold text-slate-950 transition hover:bg-emerald-400 active:scale-[.98]">
+            <a id="bleedFixLink" href="#recs" class="mt-4 flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 text-base font-extrabold text-slate-950 transition hover:bg-emerald-400 active:scale-[.98]">
               Stop the bleed — see my best fit
               <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
             </a>
@@ -210,6 +210,56 @@
         </article>
       </div>
 
+      <!-- Single-tool picks -->
+      <section id="singlePicks" class="mt-10" aria-labelledby="single-heading">
+        <div class="text-center">
+          <h3 id="single-heading" class="text-xl font-black tracking-tight text-white sm:text-2xl">Only replacing one tool?</h3>
+          <p class="mx-auto mt-2 max-w-2xl text-sm text-slate-400">You don't have to consolidate everything. If one tool is the real pain, these two are worth a look.</p>
+        </div>
+        <div class="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2">
+        <article id="cardBeehiiv" class="relative flex scroll-mt-6 flex-col rounded-2xl border border-slate-800 bg-slate-900/80 p-5 transition sm:p-6">
+          <span id="chipBeehiiv" class="absolute -top-3 left-5 hidden rounded-full bg-violet-400 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-slate-950 shadow-lg"></span>
+          <p class="text-xs font-bold uppercase tracking-wider text-violet-400">Best if your main tool is a newsletter</p>
+          <h4 class="mt-2 text-xl font-black text-white">beehiiv for newsletters</h4>
+          <p class="mt-2 text-sm text-slate-400">A newsletter platform built around growing and monetizing an audience, with a free plan to start.</p>
+          <ul class="mt-4 space-y-2 text-sm text-slate-300">
+            <li class="flex gap-2"><span class="text-violet-400">✔</span><span>Newsletter growth tools built in</span></li>
+            <li class="flex gap-2"><span class="text-violet-400">✔</span><span>Referral and recommendation features to help your list grow</span></li>
+            <li class="flex gap-2"><span class="text-violet-400">✔</span><span>Ways to monetize your newsletter, such as paid subscriptions and ads</span></li>
+          </ul>
+          <div class="mt-4 rounded-xl bg-violet-500/10 p-3 text-sm text-violet-200 ring-1 ring-violet-500/30">Choose this if email is the one tool you want to replace and a newsletter is the heart of your business.</div>
+          <div class="mt-auto pt-5">
+            <p class="cta-disclosure mb-2 text-center text-xs text-slate-400">Partner link: we may earn a commission if you sign up, at no extra cost to you.</p>
+            <a id="ctaBeehiiv" href="https://www.beehiiv.com/?via=worthlab" target="_blank" rel="sponsored noopener noreferrer" class="flex min-h-[56px] w-full items-center justify-center gap-2 rounded-xl border-2 border-violet-400 px-5 text-base font-extrabold text-violet-300 transition hover:bg-violet-400 hover:text-slate-950 active:scale-[.98]">
+              Try beehiiv free
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </a>
+            <p class="mt-2 text-center text-xs text-slate-500">Free plan to start</p>
+          </div>
+        </article>
+        <article id="cardClickFunnels" class="relative flex scroll-mt-6 flex-col rounded-2xl border border-slate-800 bg-slate-900/80 p-5 transition sm:p-6">
+          <span id="chipClickFunnels" class="absolute -top-3 left-5 hidden rounded-full bg-amber-400 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-slate-950 shadow-lg"></span>
+          <p class="text-xs font-bold uppercase tracking-wider text-amber-400">Best if you live inside a dedicated funnel builder</p>
+          <h4 class="mt-2 text-xl font-black text-white">ClickFunnels for funnels</h4>
+          <p class="mt-2 text-sm text-slate-400">A dedicated funnel builder for creators whose business runs on landing pages and sales funnels.</p>
+          <ul class="mt-4 space-y-2 text-sm text-slate-300">
+            <li class="flex gap-2"><span class="text-amber-400">✔</span><span>14-day free trial</span></li>
+            <li class="flex gap-2"><span class="text-amber-400">✔</span><span>Launch plan $97/mo ($81/mo billed yearly)</span></li>
+            <li class="flex gap-2"><span class="text-amber-400">✔</span><span>Built around sales funnels first</span></li>
+          </ul>
+          <div class="mt-4 rounded-xl bg-amber-500/10 p-3 text-sm text-amber-200 ring-1 ring-amber-500/30">Don't need a dedicated funnel tool? Systeme.io (above) is the lower-cost all-in-one.</div>
+          <div class="mt-auto pt-5">
+            <p class="cta-disclosure mb-2 text-center text-xs text-slate-400">Partner link: we may earn a commission if you sign up, at no extra cost to you.</p>
+            <a id="ctaClickFunnels" href="https://www.clickfunnels.com/signup-flow?aff=1aa75bcbecd88e3a4592cb70de2669bf6a2e3ed3cd85e3e1349caeb05926ce3a" target="_blank" rel="sponsored noopener noreferrer" class="flex min-h-[56px] w-full items-center justify-center gap-2 rounded-xl border-2 border-amber-400 px-5 text-base font-extrabold text-amber-300 transition hover:bg-amber-400 hover:text-slate-950 active:scale-[.98]">
+              Start the ClickFunnels trial
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </a>
+            <p class="mt-2 text-center text-xs text-slate-500">14-day free trial · check current plans on ClickFunnels</p>
+          </div>
+        </article>
+        </div>
+      </section>
+
       <!-- Optional email capture (shown only once signups are switched on in the Guild API) -->
       <div id="saveBox" class="mx-auto mt-8 hidden max-w-2xl rounded-2xl border border-slate-800 bg-slate-900/80 p-5 sm:p-6">
         <p class="text-xs font-bold uppercase tracking-wider text-emerald-400">Not switching today?</p>
@@ -242,7 +292,7 @@
         <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Yearly bleed</p>
         <p id="stickyBleed" class="tabular text-2xl font-black leading-none text-rose-400">$0</p>
       </div>
-      <a href="#recs" class="cta-pulse flex min-h-[48px] items-center rounded-xl bg-emerald-500 px-5 text-sm font-extrabold text-slate-950 active:scale-[.97]">Fix it →</a>
+      <a id="stickyFixLink" href="#recs" class="cta-pulse flex min-h-[48px] items-center rounded-xl bg-emerald-500 px-5 text-sm font-extrabold text-slate-950 active:scale-[.97]">Fix it →</a>
     </div>
   </div>
 
@@ -319,6 +369,8 @@
             var h = new URL(href).hostname.toLowerCase();
             if (h === 'systeme.io' || h.slice(-11) === '.systeme.io') return 'systeme_io';
             if (h === 'getresponse.com' || h.slice(-16) === '.getresponse.com') return 'getresponse';
+            if (h === 'beehiiv.com' || h.slice(-12) === '.beehiiv.com') return 'beehiiv';
+            if (h === 'clickfunnels.com' || h.slice(-17) === '.clickfunnels.com') return 'clickfunnels';
           } catch (e) {}
           return '';
         }
@@ -335,7 +387,7 @@
         guildPin = pin;
         if (pin && freshArrival) guildPing('visit', pin);
 
-        Array.prototype.forEach.call(document.querySelectorAll('a[href*="systeme.io"], #ctaGR'), function (a) {
+        Array.prototype.forEach.call(document.querySelectorAll('a[href*="systeme.io"], #ctaGR, #ctaBeehiiv, #ctaClickFunnels'), function (a) {
           try {
             if (pin) {
               var u = new URL(a.href);
@@ -564,7 +616,25 @@
             : 'At <strong class="text-white">' + fmt(monthly) + '/mo</strong>, you\'re overpaying for a creator stack. Systeme.io replaces all ' + TOOLS.length + ' tools and puts <strong class="text-emerald-300">' + fmt(bleed) + '/yr</strong> back in your pocket.';
 
         $('grNote').textContent = scaling ? CARD2.noteScaling : CARD2.noteDefault;
+        renderSinglePicks();
       }
+
+      // Single-tool picks: "Matches your stack" / "You came for this" chips, and the pin-aware Fix it target
+      var pinCode = /_bh_/.test(guildPin || '') ? 'bh' : /_cf_/.test(guildPin || '') ? 'cf' : '';
+      function renderSinglePicks() {
+        function on(id) { return state.tools[id].on && state.tools[id].cost > 0; }
+        [
+          { chip: 'chipBeehiiv', code: 'bh', match: on('email') },
+          { chip: 'chipClickFunnels', code: 'cf', match: on('funnel') }
+        ].forEach(function (c) {
+          var el = $(c.chip), came = pinCode === c.code;
+          el.textContent = came ? 'You came for this' : 'Matches your stack';
+          el.classList.toggle('hidden', !(came || c.match));
+        });
+      }
+      var fixTarget = pinCode === 'bh' ? '#cardBeehiiv' : pinCode === 'cf' ? '#cardClickFunnels' : '#recs';
+      $('bleedFixLink').setAttribute('href', fixTarget);
+      $('stickyFixLink').setAttribute('href', fixTarget);
 
       // Hide sticky bar when recommendations are on screen
       var bar = $('stickyBar');
